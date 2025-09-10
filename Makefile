@@ -4,7 +4,7 @@
 
 # Makefile for data_decomposition project
 
-.PHONY: test test-verbose install clean help dev-install format lint type-check check-all git-clean git-setup
+.PHONY: test test-verbose install clean help dev-install format lint type-check check-all git-clean git-setup experiments
 
 # Default target
 help:
@@ -15,18 +15,15 @@ help:
 	@echo "  install           Install project dependencies"
 	@echo "  dev-install       Install development dependencies"
 	@echo "  clean             Clean up generated files"
-	@echo "  format            Format code using black"
-	@echo "  lint              Run linting checks"
-	@echo "  type-check        Run type checking"
-	@echo "  check-all         Run tests, linting, and type checking"
+	@echo "  experiments       Run comparison experiments"
+	@echo "  experiments-quick Run quick experiments (fewer repetitions)"
 	@echo "  git-clean         Clean up git repository from ignored files"
 	@echo "  git-setup         Setup git repository (clean + add files)"
 	@echo "  help              Show this help message"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make test         # Run the test suite"
-	@echo "  make install      # Install dependencies"
-	@echo "  make check-all    # Full validation pipeline"
+	@echo "  make experiments  # Run comparison experiments"
 	@echo "  make git-setup    # Setup git repository"
 
 # Test commands
@@ -50,15 +47,15 @@ dev-install: install
 # Code quality commands
 format:
 	@echo "Formatting code with black..."
-	@python -m black . --line-length 88 --target-version py38
+	@python3 -m black . --line-length 88 --target-version py38
 
 lint:
 	@echo "Running linting checks..."
-	@python -m flake8 . --max-line-length=88 --ignore=E203,W503,E501
+	@python3 -m flake8 . --max-line-length=88 --ignore=E203,W503,E501
 
 type-check:
 	@echo "Running type checks..."
-	@python -m mypy . --ignore-missing-imports
+	@python3 -m mypy . --ignore-missing-imports
 
 # Comprehensive check
 check-all: format lint type-check test
@@ -88,7 +85,7 @@ quick-check: format lint type-check
 # Test with coverage
 test-coverage:
 	@echo "Running tests with coverage..."
-	@PYTHONPATH=src python -m pytest tests/ --cov=src/data_decomposition --cov-report=html --cov-report=term
+	@PYTHONPATH=src python3 -m pytest tests/ --cov=src/data_decomposition --cov-report=html --cov-report=term
 
 # Run specific test file
 test-file:
@@ -97,7 +94,7 @@ test-file:
 		echo "Example: make test-file FILE=test_aipw.py"; \
 	else \
 		echo "Running tests for $(FILE)..."; \
-		PYTHONPATH=src python -m pytest tests/$(FILE) -v; \
+		PYTHONPATH=src python3 -m pytest tests/$(FILE) -v; \
 	fi
 
 # Setup development environment
@@ -105,6 +102,28 @@ setup-dev: dev-install
 	@echo "Setting up development environment..."
 	@echo "Dependencies installed."
 	@echo "Run 'make test' to verify everything works."
+
+# Experiment commands
+experiments:
+	@echo "Running treatment effect experiments..."
+	@PYTHONPATH=src python3 experiments/scripts/treatment_only.py
+
+experiments-quick:
+	@echo "Running quick treatment experiments (fewer repetitions)..."
+	@PYTHONPATH=src python3 experiments/scripts/treatment_only.py --quick
+
+experiments-single:
+	@if [ -z "$(DGP)" ]; then \
+		echo "Usage: make experiments-single DGP=dgp_name"; \
+		echo "Available DGPs:"; \
+		echo "  linear_homoskedastic      # Linear Gaussian with homoskedastic noise"; \
+		echo "  linear_heteroskedastic    # Linear Gaussian with heteroskedastic noise"; \
+		echo "  athey_imbens              # Non-linear (Athey & Imbens, 2016)"; \
+		echo "  polynomial                # Non-linear (Quadratic)"; \
+	else \
+		echo "Running single DGP: $(DGP)"; \
+		PYTHONPATH=src python3 experiments/scripts/treatment_only.py --single $(DGP); \
+	fi
 
 # Git commands
 git-clean:

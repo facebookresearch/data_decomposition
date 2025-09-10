@@ -23,7 +23,7 @@ cd "$PROJECT_ROOT"
 if [[ -z "$VIRTUAL_ENV" ]]; then
     echo "Warning: No virtual environment detected."
     echo "Consider creating and activating a virtual environment:"
-    echo "  python -m venv venv"
+    echo "  python3 -m venv venv"
     echo "  source venv/bin/activate  # On Linux/Mac"
     echo "  # or"
     echo "  venv\\Scripts\\activate     # On Windows"
@@ -32,7 +32,7 @@ fi
 
 # Check if dependencies are installed
 echo "Checking dependencies..."
-python -c "
+python3 -c "
 import sys
 required_packages = ['numpy', 'pandas', 'sklearn', 'scipy', 'statsmodels', 'testslide']
 missing_packages = []
@@ -74,15 +74,15 @@ fi
 if command -v testslide >/dev/null 2>&1; then
     echo "Using testslide test runner..."
     testslide tests/test_*.py $TEST_OPTIONS
-elif python -c "import testslide" 2>/dev/null; then
+elif python3 -c "import testslide" 2>/dev/null; then
     echo "Using testslide via python module..."
-    python -m testslide tests/test_*.py $TEST_OPTIONS
+    python3 -m testslide tests/test_*.py $TEST_OPTIONS
 else
     echo "testslide not found. Trying with pytest as fallback..."
     if command -v pytest >/dev/null 2>&1; then
         pytest tests/ -v $TEST_OPTIONS
-    elif python -c "import pytest" 2>/dev/null; then
-        python -m pytest tests/ -v $TEST_OPTIONS
+    elif python3 -c "import pytest" 2>/dev/null; then
+        python3 -m pytest tests/ -v $TEST_OPTIONS
     else
         echo "Neither testslide nor pytest found. Running tests individually..."
 
@@ -99,7 +99,7 @@ else
         for test_file in "${test_files[@]}"; do
             if [[ -f "$test_file" ]]; then
                 echo "Running $test_file..."
-                if python -m unittest discover -s "$(dirname "$test_file")" -p "$(basename "$test_file")" $TEST_OPTIONS; then
+                if python3 -m unittest discover -s "$(dirname "$test_file")" -p "$(basename "$test_file")" $TEST_OPTIONS; then
                     echo "✓ $test_file passed"
                 else
                     echo "✗ $test_file failed"

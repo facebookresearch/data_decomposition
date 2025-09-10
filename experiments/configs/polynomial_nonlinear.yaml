@@ -1,0 +1,29 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+# Configuration for Non-Linear Polynomial Experiment
+name: "Non-Linear: Quadratic"
+description: "Polynomial outcome model: y ~ N((x^T*beta)^2 + tau*A, sigma^2)"
+
+# Experiment parameters
+repetitions: 100
+num_samples: 1000
+true_ate: 5.0
+
+# Data generation parameters
+std_covariates: 1.0
+std_dgp_noise: 1.0
+
+# Custom polynomial data generation
+# Uses quadratic outcome function: (X @ beta)^2 + A * treatment_effect + noise
+
+# Thinning parameters
+std_thinning_noise: 1.0
+thinning_train_information_parameter: 1.0
+
+# Plotting parameters
+plot_settings:
+  max_covariates_for_plot: 40
+  fontsize: 16
+  dpi: 300

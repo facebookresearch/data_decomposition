@@ -18,6 +18,10 @@ make git-setup                    # Setup git repository
 make test                         # Run all tests
 make test-verbose                 # Run tests with verbose output
 make test-file FILE=test_aipw.py  # Run specific test file
+
+# Experiments
+make experiments                  # Run comparison experiments
+make experiments-quick            # Run quick experiments (fewer repetitions)
 ```
 
 ## Usage

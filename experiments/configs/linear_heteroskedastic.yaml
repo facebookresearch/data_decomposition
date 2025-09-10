@@ -1,0 +1,44 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+# Configuration for Linear Gaussian (Heteroskedastic) Experiment
+name: "Linear: Heteroskedastic"
+description: "Linear model with beta-prime heteroskedastic noise"
+
+# Experiment parameters
+repetitions: 100
+num_samples: 1000
+true_ate: 5.0
+
+# Data generation parameters
+std_covariates: 1.0
+std_dgp_noise: 1.0
+
+# DGP model parameters
+outcome_model:
+  type: "DGPLinearGaussianOutcomeModel"
+  sparsity_factor: 0.0
+  std_coefficients: 1.0
+
+propensity_model:
+  type: "DGPSigmoidGaussianPropensityModel"
+  sparsity_factor: 0.0
+  std_coefficients: 1.0
+  clip_for_stability: 0.001
+
+noise_model:
+  type: "HeteroGaussian"
+  std_noise: 1.0  # Will use std_dgp_noise
+  betaprime_a: 5.0
+  betaprime_b: 3.0
+
+# Thinning parameters
+std_thinning_noise: 1.0
+thinning_train_information_parameter: 1.0
+
+# Plotting parameters
+plot_settings:
+  max_covariates_for_plot: 40
+  fontsize: 16
+  dpi: 300

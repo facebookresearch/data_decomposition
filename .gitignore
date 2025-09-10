@@ -240,6 +240,16 @@ site/
 *.model
 *.joblib
 
+# Experiment outputs
+experiments/results/
+experiments/plots/
+experiments/data/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+
 # Logs
 *.log
 logs/

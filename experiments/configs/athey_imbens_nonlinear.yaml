@@ -1,0 +1,32 @@
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+# Configuration for Non-Linear (Athey & Imbens, 2016) Experiment
+name: "Non-Linear: Athey & Imbens, 2016"
+description: "Non-linear treatment effects based on Athey & Imbens (2016) DGP"
+
+# Experiment parameters
+repetitions: 100
+num_samples: 1000
+true_ate: 5.0
+
+# Data generation parameters
+std_covariates: 1.0
+std_dgp_noise: 1.0
+
+# Athey & Imbens DGP parameters
+dgp_type: 2  # Use DGP 2 which requires 6 dimensions minimum
+
+# Custom data generation (not using standard noise models)
+# This experiment uses custom eta and kappa functions
+
+# Thinning parameters
+std_thinning_noise: 1.0
+thinning_train_information_parameter: 1.0
+
+# Plotting parameters
+plot_settings:
+  max_covariates_for_plot: 40
+  fontsize: 16
+  dpi: 300
