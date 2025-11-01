@@ -35,6 +35,7 @@ from data_decomposition.propensity import (
 from data_decomposition.types import Dataset
 from tqdm import tqdm
 
+from matplotlib.patches import Patch
 
 def load_config(config_path: str) -> Dict[str, Any]:
     """
@@ -171,7 +172,7 @@ def run_experiment_from_config(
     config = load_config(config_path)
 
     if dim_covariates is None:
-        dim_covariates = [10, 20, 30, 40, 50]
+        dim_covariates = [20, 40, 60, 80, 100]#[10, 20, 30, 40, 50]
 
     if results_dir is None:
         results_dir = Path(config_path).parent.parent / "results"
@@ -222,7 +223,7 @@ def plot_experiment_results(
     plot_settings = config.get("plot_settings", {})
     fontsize = plot_settings.get("fontsize", 15)
     dpi = plot_settings.get("dpi", 300)
-    max_covariates = plot_settings.get("max_covariates_for_plot", 40)
+    max_covariates = plot_settings.get("max_covariates_for_plot", 50) # 40
 
     # Filter results for plotting
     plot_results = expt_results.copy()
@@ -243,11 +244,25 @@ def plot_experiment_results(
     )
 
     # Add hatching patterns
-    hatches = ["////", "\\\\"]
+    hatches = ["//", "\\\\", "||"]
     num_categories = len(plot_results["method"].unique())
-    for i, patch in enumerate(box.patches):
-        hatch = hatches[i // (len(box.patches) // num_categories)]
+
+
+    handles = []
+    for i, patch in enumerate(box.patches):   
+        hatch = hatches[(i // 2) // num_categories]
+        #hatch = hatches[i // (len(box.patches) // num_categories)]
         patch.set_hatch(hatch)
+          
+            
+    handles = []
+    methods = plot_results["method"].unique()
+    palette = sns.color_palette("pastel", len(methods))
+    
+    for color, hatch, method in zip(palette, hatches, methods):
+        patch = Patch(facecolor=color, edgecolor="black", hatch=hatch, label=method)
+        handles.append(patch)
+
 
     # Style the plot
     for spine in plt.gca().spines.values():
@@ -259,8 +274,11 @@ def plot_experiment_results(
     plt.xlabel("#Covariates", fontsize=fontsize)
     plt.ylabel("AIPW Estimated ATE / True ATE", fontsize=fontsize)
     plt.title(config["name"], fontsize=fontsize + 2)
+    
 
-    handles, _ = box.get_legend_handles_labels()
+        
+    #handles, _ = box.get_legend_handles_labels()
+
     plt.legend(
         handles=handles,
         title="Method",
